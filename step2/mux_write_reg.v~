@@ -1,0 +1,60 @@
+//buffer for 5
+module buffer5 (out,in,ctrl);
+	output [4:0] out;
+	input [4:0] in;
+	input ctrl;
+	
+	bufif1 b0(out[0],in[0],ctrl);
+	bufif1 b1(out[1],in[1],ctrl);
+	bufif1 b2(out[2],in[2],ctrl);
+	bufif1 b3(out[3],in[3],ctrl);
+	bufif1 b4(out[4],in[4],ctrl);
+endmodule
+//mux for write reg
+module mux_registers (sel,in0,in1,out);
+	output [4:0] out;
+	input [4:0] in0, in1;
+	input sel;
+	
+	genvar i;
+	
+	generate for (i=0; i<5; i=i+1)
+	begin: buf_loop
+		bufif1	(out[i],in1[i],sel);
+		bufif0	(out[i],in0[i],sel);	
+	end
+	endgenerate
+	
+endmodule
+//testing 
+module test;
+	reg [4:0] in0, in1;
+	wire [4:0] out;
+	
+	reg sel;
+	
+	
+	mux_registers m1 (sel,in0,in1,out);
+	
+	initial
+	begin
+		#0
+		in0 <= 5'b11101;
+		in1 <= 5'b11001;
+	
+		#10
+		 sel = 1'b0;
+		#12
+		  
+		#20
+		 sel = 1'b1;
+		#25
+		 $display("Output- %b -> %b\n", sel,out);
+	end
+endmodule
+	
+	
+	
+	
+	
+	
